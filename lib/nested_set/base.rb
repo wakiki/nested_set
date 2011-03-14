@@ -567,6 +567,8 @@ module CollectiveIdea #:nodoc:
             # adds the new node to the right of all existing nodes
             self[left_column_name] = maxright + 1
             self[right_column_name] = maxright + 2
+            # adds the new node at root level
+            self[depth_column_name] = 0 if depth?
           end
 
           # Prunes a branch off of the tree, shifting all of the elements on the right

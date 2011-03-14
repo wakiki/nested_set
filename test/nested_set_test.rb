@@ -241,6 +241,15 @@ class NestedSetTest < ActiveSupport::TestCase
     assert_equal 2, lawyers.descendants.size
   end
 
+  def test_assign_depth_on_create
+    lawyers = Category.create!(:name => "lawyers")
+    us = Category.create!(:name => "United States", :parent => lawyers)
+    assert_equal 0, lawyers.depth
+    assert_equal 1, us.depth
+  end
+  
+
+
   def test_self_and_descendents
     parent = categories(:top_level)
     descendants = [categories(:child_1), categories(:child_2),
