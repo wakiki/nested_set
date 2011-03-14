@@ -523,10 +523,33 @@ class NestedSetTest < ActiveSupport::TestCase
   def test_rebuild
     assert Category.valid?
     before_text = Category.root.to_text
-    Category.update_all('lft = null, rgt = null')
+    Category.update_all('lft = null, rgt = null, depth = null')
     Category.rebuild!
     assert Category.valid?
     assert_equal before_text, Category.root.to_text
+  end
+
+  def test_depth_after_rebuild
+    assert Category.valid?
+    Category.update_all('lft = null, rgt = null, depth = null')
+    Category.rebuild!
+    assert Category.valid?
+    #   top_level --
+    #              |\
+    #              | child_1
+    #               \
+    #              | child_2--
+    #              |          \
+    #               \          child_2_1
+    #                child_3
+    #
+    #   top_level_2 --
+    assert_equal 0, categories(:top_level).depth
+    assert_equal 1, categories(:child_1).depth
+    assert_equal 1, categories(:child_2).depth
+    assert_equal 2, categories(:child_2_1).depth
+    assert_equal 1, categories(:child_3).depth
+    assert_equal 0, categories(:top_level_2).depth
   end
 
   def test_move_possible_for_sibling

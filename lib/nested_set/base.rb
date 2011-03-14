@@ -212,16 +212,21 @@ module CollectiveIdea #:nodoc:
             return true if valid?
 
             indices = {}
-
+            depth = {}
+            
             set_left_and_rights = lambda do |node|
               node_scope = scope_for_rebuild(node)
               # set left
               node[left_column_name] = indices[node_scope] += 1
+              # set depth
+              node[depth_column_name] = depth[node_scope]
+              depth[node_scope] += 1
               # find
               nodes_for_rebuild(node, node_scope).each{ |n| set_left_and_rights.call(n) }
               # set right
               node[right_column_name] = indices[node_scope] += 1
               node.save!
+              depth[node_scope] -= 1
             end
 
             # Find root node(s)
@@ -229,6 +234,7 @@ module CollectiveIdea #:nodoc:
               node_scope = scope_for_rebuild(root_node)
               # setup index for this scope
               indices[node_scope] ||= 0
+              depth[node_scope] ||= 0
               set_left_and_rights.call(root_node)
             end
           end
