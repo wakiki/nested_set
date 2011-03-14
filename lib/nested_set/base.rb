@@ -219,7 +219,7 @@ module CollectiveIdea #:nodoc:
               # set left
               node[left_column_name] = indices[node_scope] += 1
               # set depth
-              node[depth_column_name] = depth[node_scope]
+              node[depth_column_name] = depth[node_scope] if node.depth?
               depth[node_scope] += 1
               # find
               nodes_for_rebuild(node, node_scope).each{ |n| set_left_and_rights.call(n) }
